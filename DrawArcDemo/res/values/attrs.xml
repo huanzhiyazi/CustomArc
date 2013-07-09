@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CustomArc">
+        <attr name="arcWidth" format="dimension" />
+        <attr name="rectWidth" format="dimension" />
+        <attr name="arcColor" format="color" />
+        <attr name="rectColor" format="color" />
+    </declare-styleable>
+</resources>

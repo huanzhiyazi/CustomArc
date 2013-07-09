@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- custom arc default values -->
+    <color name="default_arc_color">#339BB9</color>
+    <color name="default_rect_color">#000000</color>
+</resources>
