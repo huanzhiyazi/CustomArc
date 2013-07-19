@@ -3,10 +3,14 @@ package com.example.customviews;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.graphics.Paint.Style;
 import android.graphics.RectF;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import com.example.drawarcdemo.R;
 
@@ -23,10 +27,14 @@ public class CustomArc extends View {
 	//paints
 	private Paint mRectPaint = new Paint();
 	private Paint mArcPaint = new Paint();
+	private Paint mProgressPaint = new Paint();
+    private Paint mPercentPaint = new Paint();
 	
 	//rects
 	private RectF mRectBounds = new RectF();
 	private RectF mArcBounds = new RectF();
+	private Rect mProgBounds = new Rect();
+    private Rect mPercentBounds = new Rect();
 
 	public CustomArc(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -48,8 +56,37 @@ public class CustomArc extends View {
 		super.onDraw(canvas);
 		
 		canvas.drawArc(mArcBounds, -90, 360, false, mArcPaint);
-		canvas.drawRect(mArcBounds, mRectPaint);
+		//canvas.drawRect(mArcBounds, mRectPaint);
 		canvas.drawRect(mRectBounds, mRectPaint);
+		
+		mProgressPaint.getTextBounds("90", 0, "90".length(), mProgBounds);
+        mPercentPaint.getTextBounds("%", 0, 1, mPercentBounds);
+        float offset = 
+                (mProgBounds.width() + mPercentBounds.width() + mPercentBounds.width() / 2) / 2;
+        
+        Log.d("caohzh", "!!!! 90's w: " + mProgBounds.width());
+        Log.d("caohzh", "!!!! 90's h: " + mProgBounds.height());
+        Log.d("caohzh", "!!!! %'s w: " + mPercentBounds.width());
+        Log.d("caohzh", "!!!! %'s h: " + mPercentBounds.height());
+        
+        Log.d("caohzh", "!!!! offset: " + offset);
+        Log.d("caohzh", "!!!! this w: " + this.getWidth());
+        Log.d("caohzh", "!!!! this h: " + this.getHeight());
+        
+        Log.d("caohzh", "!!!! 90's x: " + (this.getWidth() / 2 - offset));
+        Log.d("caohzh", "!!!! 90's y: " + (this.getHeight() / 2 + mProgBounds.height() / 2));
+        Log.d("caohzh", "!!!! %'s x: " + (this.getWidth() / 2 + offset - mPercentBounds.width()));
+        Log.d("caohzh", "!!!! %'s y: " + (this.getHeight() / 2 - mProgBounds.height() / 2 + mPercentBounds.height()));
+        
+        canvas.drawText("90", 
+                this.getWidth() / 2 - offset, 
+                this.getHeight() / 2 + mProgBounds.height() / 2, 
+                mProgressPaint);
+        
+        canvas.drawText("%", 
+                this.getWidth() / 2 + offset - mPercentBounds.width(),
+                this.getHeight() / 2 - mProgBounds.height() / 2 + mPercentBounds.height(), 
+                mPercentPaint);
 	}
 
 	private void setDefaultAttr(Context context) {
@@ -88,5 +125,17 @@ public class CustomArc extends View {
 		mArcPaint.setAntiAlias(true);
 		mArcPaint.setStyle(Style.STROKE);
 		mArcPaint.setStrokeWidth(mArcWidth);
+		
+		mProgressPaint.setColor(Color.BLACK);
+        mProgressPaint.setStyle(Style.FILL);
+        mProgressPaint.setAntiAlias(true);
+        mProgressPaint.setTextSize(180);
+        mProgressPaint.setTypeface(Typeface.DEFAULT_BOLD);
+        
+        mPercentPaint.setColor(Color.BLACK);
+        mPercentPaint.setStyle(Style.FILL);
+        mPercentPaint.setAntiAlias(true);
+        mPercentPaint.setTextSize((int)(180 * 0.7));
+        mPercentPaint.setTypeface(Typeface.DEFAULT_BOLD);
 	}
 }
