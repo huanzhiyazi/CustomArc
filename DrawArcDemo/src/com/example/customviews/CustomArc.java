@@ -23,10 +23,12 @@ public class CustomArc extends View {
 	//colors
 	private int mRectColor;
 	private int mArcColor;
+	private int mRimColor;
 	
 	//paints
 	private Paint mRectPaint = new Paint();
 	private Paint mArcPaint = new Paint();
+	private Paint mRimPaint = new Paint();
 	private Paint mProgressPaint = new Paint();
     private Paint mPercentPaint = new Paint();
 	
@@ -35,6 +37,10 @@ public class CustomArc extends View {
 	private RectF mArcBounds = new RectF();
 	private Rect mProgBounds = new Rect();
     private Rect mPercentBounds = new Rect();
+    
+    int mDegree = 0;
+    int mProgress = 0;
+    private String mProgressText = "0";
 
 	public CustomArc(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -55,11 +61,21 @@ public class CustomArc extends View {
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
 		
-		canvas.drawArc(mArcBounds, -90, 360, false, mArcPaint);
-		//canvas.drawRect(mArcBounds, mRectPaint);
-		canvas.drawRect(mRectBounds, mRectPaint);
+		//2 ways to draw the rim
+		/*
+		canvas.drawCircle(this.getWidth() / 2, 
+                this.getHeight() / 2, 
+                (mRectBounds.width() - mArcWidth)/2, 
+                mRimPaint);
+		*/
+		canvas.drawArc(mArcBounds, 360, 360, false, mRimPaint);
 		
-		mProgressPaint.getTextBounds("90", 0, "90".length(), mProgBounds);
+		canvas.drawArc(mArcBounds, -90, mDegree, false, mArcPaint);
+		
+		//canvas.drawRect(mArcBounds, mRectPaint);
+		//canvas.drawRect(mRectBounds, mRectPaint);
+		
+		mProgressPaint.getTextBounds(mProgressText, 0, mProgressText.length(), mProgBounds);
         mPercentPaint.getTextBounds("%", 0, 1, mPercentBounds);
         float offset = 
                 (mProgBounds.width() + mPercentBounds.width() + mPercentBounds.width() / 2) / 2;
@@ -78,7 +94,7 @@ public class CustomArc extends View {
         Log.d("caohzh", "!!!! %'s x: " + (this.getWidth() / 2 + offset - mPercentBounds.width()));
         Log.d("caohzh", "!!!! %'s y: " + (this.getHeight() / 2 - mProgBounds.height() / 2 + mPercentBounds.height()));
         
-        canvas.drawText("90", 
+        canvas.drawText(mProgressText, 
                 this.getWidth() / 2 - offset, 
                 this.getHeight() / 2 + mProgBounds.height() / 2, 
                 mProgressPaint);
@@ -94,6 +110,7 @@ public class CustomArc extends View {
 		mArcWidth = context.getResources().getDimensionPixelSize(R.dimen.default_arc_width);
 		mRectColor = context.getResources().getColor(R.color.default_rect_color);
 		mArcColor = context.getResources().getColor(R.color.default_arc_color);
+		mRimColor = context.getResources().getColor(R.color.default_rim_color);
 	}
 	
 	private void parseAttributes(TypedArray a) {
@@ -103,6 +120,7 @@ public class CustomArc extends View {
 				mArcWidth);
 		mRectColor = a.getColor(R.styleable.CustomArc_rectColor, mRectColor);
 		mArcColor = a.getColor(R.styleable.CustomArc_arcColor, mArcColor);
+		mRimColor = a.getColor(R.styleable.CustomArc_rimColor, mRimColor);
 	}
 	
 	private void setupBounds() {
@@ -126,16 +144,51 @@ public class CustomArc extends View {
 		mArcPaint.setStyle(Style.STROKE);
 		mArcPaint.setStrokeWidth(mArcWidth);
 		
+		mRimPaint.setColor(mRimColor);
+        mRimPaint.setAntiAlias(true);
+        mRimPaint.setStyle(Style.STROKE);
+        mRimPaint.setStrokeWidth(mArcWidth);
+		
 		mProgressPaint.setColor(Color.BLACK);
         mProgressPaint.setStyle(Style.FILL);
         mProgressPaint.setAntiAlias(true);
-        mProgressPaint.setTextSize(180);
+        mProgressPaint.setTextSize(120);
         mProgressPaint.setTypeface(Typeface.DEFAULT_BOLD);
         
         mPercentPaint.setColor(Color.BLACK);
         mPercentPaint.setStyle(Style.FILL);
         mPercentPaint.setAntiAlias(true);
-        mPercentPaint.setTextSize((int)(180 * 0.7));
+        mPercentPaint.setTextSize((int)(120 * 0.7));
         mPercentPaint.setTypeface(Typeface.DEFAULT_BOLD);
 	}
+	
+	public void setProgress(int i) {
+        mProgress = i;
+        mDegree = Math.round( ((float)mProgress / 100) * 360 );
+        mProgressText = String.valueOf(mProgress);
+        this.post(new Runnable() {
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				invalidate();
+			}
+        	
+        });
+    }
+	
+	public void resetCount() {
+        mDegree = 0;
+        mProgress = 0;
+        mProgressText = "0";
+        this.post(new Runnable() {
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				invalidate();
+			}
+        	
+        });
+    }
 }

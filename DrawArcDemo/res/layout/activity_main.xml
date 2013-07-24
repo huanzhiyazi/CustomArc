@@ -11,6 +11,7 @@
     tools:context=".MainActivity" >
 
     <com.example.customviews.CustomArc
+        android:id="@+id/progress"
         android:layout_width="200dp"
         android:layout_height="200dp" />
 
